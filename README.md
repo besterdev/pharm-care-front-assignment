@@ -104,6 +104,46 @@ This gives you `http://localhost:4000/tasks` with filtering (`?status=new`), sea
 (`?q=john`), and `PATCH`/`PUT`. Another mock service (MockAPI.io, MSW, etc.) is fine —
 just document it.
 
+### Local development
+
+Run the API and dashboard in separate terminals:
+
+```bash
+npm run mock:api
+npm start
+```
+
+Without environment configuration, the dashboard requests `/tasks` and Vite proxies it
+to `http://localhost:4000`.
+
+### Vercel deployment with MockAPI.io
+
+`json-server` cannot run as a persistent process on a static Vercel deployment. Use a
+MockAPI.io project so `GET /tasks`, polling, and `PATCH /tasks/:id` remain available.
+
+1. Create a MockAPI.io project and an empty `tasks` resource.
+2. Seed it once from `db.json`:
+
+   ```bash
+   npm run seed:mock -- https://<project>.mockapi.io/api/v1
+   ```
+
+3. In Vercel → Project Settings → Environment Variables, add this value to Production
+   and Preview:
+
+   ```text
+   VITE_API_BASE_URL=https://<project>.mockapi.io/api/v1
+   ```
+
+   Use the project base URL without `/tasks`. This is a public browser configuration,
+   so do not store secrets in it.
+
+4. Redeploy the project after adding or changing the environment variable. Vercel should
+   detect Vite automatically; the build command is `npm run build` and output is `dist`.
+
+To test the remote API locally, copy `.env.example` to `.env.local`, set the same URL,
+and restart `npm start`.
+
 ---
 
 ## Deliverables

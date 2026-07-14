@@ -7,6 +7,7 @@
     "dev": "vite",
     "start": "vite",
     "mock:api": "json-server --watch db.json --port 4000",
+    "seed:mock": "node scripts/seed-mock-api.mjs",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --pretty false",
     "lint": "eslint .",
