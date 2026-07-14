@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-sans: 'Manrope', 'IBM Plex Sans Thai', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'DM Mono', ui-monospace, SFMono-Regular, monospace;
+    --background: 240 100% 99%;
+    --foreground: 226 25% 29%;
+    --muted: 231 55% 95%;
+    --muted-foreground: 227 15% 55%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 226 25% 29%;
+    --border: 230 42% 91%;
+    --input: 230 42% 91%;
+    --ring: 229 65% 62%;
+    --accent: 230 58% 95%;
+    --accent-foreground: 226 25% 29%;
+    --radius: 0.625rem;
+  }
+  * { @apply border-border; }
+  body {
+    @apply min-w-[320px] bg-[#f7f8ff] font-sans text-[#4b536f];
+    font-feature-settings: 'kern', 'liga', 'tnum';
+    text-rendering: optimizeLegibility;
+  }
+  button, input, select { font: inherit; }
+}
+
+@keyframes shimmer { to { background-position: -200% 0; } }
+@keyframes sheet-in-right { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes sheet-out-right { from { transform: translateX(0); } to { transform: translateX(100%); } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
