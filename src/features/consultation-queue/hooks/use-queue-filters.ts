@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { useDebouncedValue } from "./use-debounced-value"
-import type { DateRangeFilter, StatusFilter } from "@/types/task"
+import { useDebouncedValue } from "@/shared/hooks/use-debounced-value"
+import type { DateRangeFilter, StatusFilter } from "../types/task"
 
 type QueueFilters = {
   query: string

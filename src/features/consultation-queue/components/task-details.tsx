@@ -9,7 +9,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils/cn"
 import {
   customerInitials,
   customerName,
@@ -19,8 +19,8 @@ import {
   SERVICE_LABEL,
   taskDataIssueMessages,
   taskDateTime,
-} from "@/lib/task"
-import type { ConsultationTask } from "@/types/task"
+} from "../utils/task"
+import type { ConsultationTask } from "../types/task"
 import { StatusBadge } from "./status-badge"
 
 type Props = {

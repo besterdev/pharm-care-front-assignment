@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { MotionConfig } from "framer-motion"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import App from "./App"
-import "./styles.css"
+import "@/styles/globals.css"
 
 const queryClient = new QueryClient({
   defaultOptions: {

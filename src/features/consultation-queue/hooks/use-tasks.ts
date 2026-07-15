@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { apiClient } from "../lib/api-client"
-import { getDisplayStatus, getNextStatus, normalizeTasks } from "../lib/task"
+import { axiosInstance } from "@/shared/lib/axios-instance"
+import { getDisplayStatus, getNextStatus } from "../utils/task"
+import { taskService } from "../services/tasks-api"
 import type { ConsultationTask, TaskStatus } from "../types/task"
 
 const tasksQueryKey = ["tasks"] as const
@@ -9,16 +10,11 @@ const statusMutationKey = ["tasks", "status"] as const
 const liveQueuePollMs = 15_000
 const emptyTasks: ConsultationTask[] = []
 
-const fetchTasks = async (): Promise<ConsultationTask[]> => {
-  const response = await apiClient.get<unknown>("/tasks")
-  return normalizeTasks(response.data)
-}
-
 export const useTasks = () => {
   const queryClient = useQueryClient()
   const tasksQuery = useQuery({
     queryKey: tasksQueryKey,
-    queryFn: fetchTasks,
+    queryFn: taskService.getTasks,
     refetchInterval: liveQueuePollMs,
     refetchIntervalInBackground: true,
   })
@@ -54,7 +50,7 @@ export const useTasks = () => {
     mutationKey: statusMutationKey,
     mutationFn: async (task: ConsultationTask) => {
       const nextStatus = getNextStatus(task)
-      await apiClient.patch(`/tasks/${encodeURIComponent(task.apiId)}`, {
+      await axiosInstance.patch(`/tasks/${encodeURIComponent(task.apiId)}`, {
         status: nextStatus,
       })
       return { key: task.key, nextStatus }

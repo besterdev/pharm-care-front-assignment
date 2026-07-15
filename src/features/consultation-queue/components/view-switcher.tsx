@@ -1,6 +1,6 @@
-import { LayoutGrid, List } from 'lucide-react'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import type { ViewMode } from '@/types/task'
+import { LayoutGrid, List } from "lucide-react"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import type { ViewMode } from "../types/task"
 
 type Props = {
   view: ViewMode

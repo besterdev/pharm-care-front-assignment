@@ -13,6 +13,30 @@ Build a small dashboard pharmacists use to manage incoming telepharmacy consulta
 requests: review the queue, open a request to see its details, and move it through its
 workflow. The design is entirely up to you.
 
+## Project structure
+
+The app follows a feature-based structure so consultation-queue changes stay together,
+while reusable UI and app-level concerns remain separate.
+
+```text
+src/
+├── components/ui/                 # Reusable shadcn-style primitives
+├── features/consultation-queue/
+│   ├── components/                # Queue-specific UI
+│   ├── hooks/                     # Tasks and URL-filter state
+│   ├── services/                  # API client
+│   ├── types/                     # Task domain types
+│   └── utils/                     # Normalization and filtering helpers
+├── layouts/                       # Shared dashboard frame/navigation
+├── pages/                         # Complete dashboard screen
+├── routes/                        # Route composition entry point
+├── shared/                        # Cross-feature hooks and utilities
+└── styles/                        # Global Tailwind styles and animations
+```
+
+Folders such as `assets`, `constants`, and `context` are added only when the app has a
+real shared need for them, avoiding empty scaffolding.
+
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │  Telepharmacy Task Dashboard                                       │

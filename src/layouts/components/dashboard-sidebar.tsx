@@ -1,5 +1,9 @@
-import { BellDot, Stethoscope } from 'lucide-react'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { BellDot, Stethoscope } from "lucide-react"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 export const DashboardSidebar = () => (
   <aside className="flex min-h-dvh w-[88px] shrink-0 flex-col items-center bg-gradient-to-b from-[#5570d9] to-[#3f5bc9] px-[13px] py-[22px] max-sm:w-[56px] max-sm:px-1.5 max-sm:py-3">

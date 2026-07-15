@@ -13,8 +13,8 @@ import {
   SERVICE_LABEL,
   taskDataIssueMessages,
   taskTime,
-} from "@/lib/task"
-import type { ConsultationTask } from "@/types/task"
+} from "../utils/task"
+import type { ConsultationTask } from "../types/task"
 import { StatusBadge } from "./status-badge"
 
 type Props = {

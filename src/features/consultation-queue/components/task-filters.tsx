@@ -15,7 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import type { DateRangeFilter, StatusFilter } from "@/types/task"
+import type { DateRangeFilter, StatusFilter } from "../types/task"
 import type { DateRange } from "react-day-picker"
 
 const Calendar = lazy(() =>

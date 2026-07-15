@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { DayPicker } from 'react-day-picker'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from "@/shared/utils/cn"
 
 const Calendar = ({ className, classNames, showOutsideDays = true, ...props }: React.ComponentProps<typeof DayPicker>) => {
   return <DayPicker
