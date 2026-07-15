@@ -1,185 +1,207 @@
-# Frontend Take-Home: Telepharmacy Task Dashboard
+# Telepharmacy Task Dashboard
 
-Thanks for taking the time to work on this! It should take a few hours — around 3 at
-most, but feel free to spend longer if you'd like, no pressure. There's no need to
-finish every stretch goal. What we care about most is how you structure and reason
-about your code, and how you use AI tools along the way — not how much you build.
+A dashboard for pharmacists to monitor and manage incoming telepharmacy consultations in real time. Built with React, TypeScript, shadcn/ui, Tailwind CSS, and Framer Motion.
 
----
+## Links
+
+- **Live demo:** [pharm-care-front-assignment.vercel.app](https://pharm-care-front-assignment.vercel.app)
+- **Frontend repository:** [besterdev/pharm-care-front-assignment](https://github.com/besterdev/pharm-care-front-assignment)
+- **Backend repository:** [besterdev/telepharmacy-back-end-go](https://github.com/besterdev/telepharmacy-back-end-go)
 
 ## Overview
 
-Build a small dashboard pharmacists use to manage incoming telepharmacy consultation
-requests: review the queue, open a request to see its details, and move it through its
-workflow. The design is entirely up to you.
-
-## Project structure
-
-The app follows a feature-based structure so consultation-queue changes stay together,
-while reusable UI and app-level concerns remain separate.
+Pharmacists can review incoming consultation requests, filter the queue, inspect task details, and progress a consultation through its workflow without leaving the dashboard.
 
 ```text
-src/
-├── components/ui/                 # Reusable shadcn-style primitives
-├── features/consultation-queue/
-│   ├── components/                # Queue-specific UI
-│   ├── hooks/                     # Tasks and URL-filter state
-│   ├── services/                  # API client
-│   ├── types/                     # Task domain types
-│   └── utils/                     # Normalization and filtering helpers
-├── layouts/                       # Shared dashboard frame/navigation
-├── pages/                         # Complete dashboard screen
-├── routes/                        # Route composition entry point
-├── shared/                        # Cross-feature hooks and utilities
-└── styles/                        # Global Tailwind styles and animations
+Incoming request
+      ↓
+New → Start review → In progress → Mark complete → Completed
+      ↓
+The queue, summary, and live status update automatically
 ```
 
-Folders such as `assets`, `constants`, and `context` are added only when the app has a
-real shared need for them, avoiding empty scaffolding.
+## Features
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│  Telepharmacy Task Dashboard                                       │
-├──────────────────────────────────────────────────────────────────┤
-│  [ Search customer... ]    Service: [ All ▾ ]   Status: [ All ▾ ]  │
-├──────────────────────────────────────────────────────────────────┤
-│   ┌────────────────────────┐   ┌────────────────────────┐         │
-│   │ Somchai P.      ● New   │   │ Anong W.    ◐ In prog.  │         │
-│   │ 📹 Video call           │   │ 📹 Video call           │        │
-│   │ "Persistent dry cough"  │   │ "Chest pain, short..."  │        │
-│   │ 09:12                   │   │ 08:45                   │        │
-│   └────────────────────────┘   └────────────────────────┘         │
-└──────────────────────────────────────────────────────────────────┘
-      ↑ click a card → open details + advance the status
-```
+### Queue management
 
-### Data model
+- Display consultations in grid or list view.
+- Open consultation details in a drawer without leaving the queue.
+- Advance a task through `new` → `in_progress` → `completed`.
+- Use optimistic updates so the UI responds immediately and rolls back if the API request fails.
+- Clearly handle loading, empty, and error states.
 
-```ts
-type Task = {
-  id: string;
-  customerName: string;
-  serviceType: 'video_call' | 'voice_call' | 'chat';
-  symptom: string;      // reason for the consultation
-  status: 'new' | 'in_progress' | 'completed';
-  createdAt: string;    // ISO date string
-};
-```
+### Search and filters
 
-A seed file (`db.json`) is included — see [Running the mock API](#running-the-mock-api).
+- Search by customer name or consultation reason.
+- Filter by service type: video call, voice call, or chat.
+- Filter by consultation status.
+- Filter by created date: today, this week, or a custom range from a Calendar popover.
+- Debounce search input by 300 ms.
+- Persist search and filters in the URL, including browser back/forward navigation.
 
----
+### Live queue and data quality
 
-## Requirements
+- Poll for queue changes every 15 seconds while the tab is active.
+- Notify users when new consultations arrive without a page refresh.
+- Show summary counts for New, In progress, and Completed tasks.
+- Normalize imperfect API data, including duplicate IDs, invalid dates, and unknown status values.
+- Prevent updates to tasks that do not have a reliable unique ID, with a clear explanation in the drawer.
 
-### Core (required)
+### UX and responsive design
 
-1. **List view** — fetch and display the tasks.
-2. **Detail view** — clicking a task opens a drawer, modal, or route (`/task/:id`).
-3. **Status update** — advance a task `new → in_progress → completed`, reflected in the UI.
+- Icon-first sidebar to preserve workspace.
+- Responsive layout: profile and daily plan are a desktop side panel and move above the task list on smaller screens.
+- Details drawer becomes a bottom sheet on mobile.
+- Built with shadcn/ui primitives, Lucide icons, Tailwind CSS, and Framer Motion for a minimal, interactive interface.
 
-### Stretch goals (optional)
+## User workflow
 
-- **Request states** — handle loading, empty, and error states clearly.
-- **Filter & search** — by `serviceType`, `status`, and customer name.
-- **Date-range filter** — by `createdAt` (today, this week, custom range).
-- **Live queue** — poll or simulate incoming requests so new tasks appear without a refresh.
-- **Summary bar** — counts per status (e.g. New: 4 · In progress: 2 · Completed: 3).
-- Persist filters and search in the URL.
-- Debounce the search input.
-- Add at least one meaningful unit test.
-- Support a responsive layout.
+1. Open the dashboard to review current summary metrics and the incoming queue.
+2. Use search, service, status, or date filters to narrow the list.
+3. Select a task card to inspect its details and workflow in the drawer.
+4. Select **Start review** to move a `new` consultation to `in_progress`.
+5. Select **Mark complete** to move an `in_progress` consultation to `completed`.
+6. The app syncs the change with the API and refreshes the queue on its polling interval.
 
-### 💡 Have an improvement idea of your own?
+## Tech stack
 
-> **We'd genuinely love to see it.** If you spot something you'd add or do differently —
-> a feature, a UX tweak, a better approach — feel free to build it or jot it down. Sharing
-> your own ideas is a big plus, and we'd be very pleased to hear them.
+- React 18 and TypeScript
+- Vite
+- TanStack React Query
+- Axios
+- Tailwind CSS and shadcn/ui primitives
+- Framer Motion
+- Lucide React
+- json-server for the local mock API
+- Vitest
 
----
+## Getting started
 
-## Debugging the seed data
+### Prerequisites
 
-Real APIs return imperfect data. `db.json` contains some **intentional issues** that
-break the data model. Your app shouldn't crash, render `undefined`/`Invalid Date`, or
-silently drop them — handle them deliberately (fallback, filter, or flag; your call).
+- Node.js 18+
+- npm
 
----
+### Install and run locally
 
-## Ground Rules
-
-- **React and TypeScript required.**
-- Any CSS framework or UI library you like (MUI, Tailwind, Chakra, plain CSS, etc.).
-- Write code as if it were going into a real, growing codebase.
-- **UX/UI is up to you** — aim for something clean and pleasant.
-- **Use AI tools freely** — just understand your own code; we'll discuss it afterward.
-
----
-
-## Running the mock API
-
-We recommend [`json-server`](https://github.com/typicode/json-server):
+Install dependencies:
 
 ```bash
-npx json-server --watch db.json --port 4000
+npm install
 ```
 
-This gives you `http://localhost:4000/tasks` with filtering (`?status=new`), search
-(`?q=john`), and `PATCH`/`PUT`. Another mock service (MockAPI.io, MSW, etc.) is fine —
-just document it.
-
-### Local development
-
-Run the API and dashboard in separate terminals:
+Start the mock API in the first terminal:
 
 ```bash
 npm run mock:api
+```
+
+Start the dashboard in a second terminal:
+
+```bash
 npm start
 ```
 
-Without environment configuration, the dashboard requests `/tasks` and Vite proxies it
-to `http://localhost:4000`.
+Open [http://localhost:5173](http://localhost:5173).
 
-### Production API
+## API flow
 
-`json-server` is only used in local development. In production the dashboard calls
-`GET /api/v1/tasks` and `PATCH /api/v1/tasks/:id` on the configured API origin.
+### Local development
 
-Set this environment variable in your deployment platform:
+```text
+Browser → /tasks → Vite proxy → json-server:4000/tasks → db.json
+```
+
+Local development uses `json-server`. Vite proxies `/tasks` to avoid browser CORS issues.
+
+| Method  | Endpoint     | Purpose                      |
+| ------- | ------------ | ---------------------------- |
+| `GET`   | `/tasks`     | Fetch all consultations      |
+| `PATCH` | `/tasks/:id` | Update a consultation status |
+
+### Production
+
+```text
+Browser → /api/v1/tasks → Production API
+```
+
+Configure the production API origin in the deployment environment:
 
 ```text
 VITE_API_BASE_URL=https://api.example.com
 ```
 
-Do not include `/api/v1/tasks`; the client appends that path automatically. The API can
-return either a direct `Task[]` array or `{ "data": Task[] }`.
+Do not include `/api/v1/tasks` in this value; the client appends that path automatically.
 
-`VITE_API_BASE_URL` is public browser configuration, so do not store secrets in it.
+| Method  | Endpoint            | Purpose                      |
+| ------- | ------------------- | ---------------------------- |
+| `GET`   | `/api/v1/tasks`     | Fetch all consultations      |
+| `PATCH` | `/api/v1/tasks/:id` | Update a consultation status |
 
----
+The client accepts either response shape:
 
-## Deliverables
+```json
+[{ "id": "1", "status": "new" }]
+```
 
-A **GitHub repo** (or zip) with:
+or:
 
-1. Your source code.
-2. A short `README` — how to run it, what you'd improve with more time, trade-offs, and
-   any improvement ideas of your own.
-3. Runs with `npm install && npm start` (plus the mock API command above).
+```json
+{
+  "data": [{ "id": "1", "status": "new" }]
+}
+```
 
-**Bonus:** deploy it live (Vercel, Netlify, GitHub Pages, etc.), include the URL, and
-note how you made the mock API reachable.
+`VITE_API_BASE_URL` is public browser configuration. Never place secrets, tokens, or service keys in it.
 
----
+## Task data model
 
-## Evaluation
+```ts
+type Task = {
+  id: string
+  customerName: string
+  serviceType: "video_call" | "voice_call" | "phone_call" | "chat"
+  symptom: string | null
+  status: "new" | "in_progress" | "completed"
+  createdAt: string // ISO 8601 date
+  completedAt?: string
+}
+```
 
-- **Correctness** — the core features work.
-- **Code structure** — clear separation of concerns.
-- **Maintainability** — clear naming, reusable components, easy to extend.
-- **TypeScript quality** — well-typed, readable code.
-- **State handling** — async, loading, and error states.
-- **UX polish** — a clean, pleasant interface.
+[db.json](./db.json) contains local seed data, including intentionally imperfect records to validate edge-case handling.
 
-We'll discuss your decisions afterward, so build it the way you'd want to defend it. Good
-luck, and have fun!
+## Project structure
+
+```text
+src/
+├── components/ui/                 # Shared shadcn-style UI primitives
+├── features/consultation-queue/
+│   ├── components/                # Task card, filters, drawer, and queue UI
+│   ├── hooks/                     # React Query and URL filter state
+│   ├── services/                  # API service
+│   ├── types/                     # Task domain types
+│   └── utils/                     # Normalization, filtering, and display helpers
+├── layouts/                       # Dashboard shell, header, and sidebar
+├── pages/                         # Screen-level composition
+├── routes/                        # Application routes
+├── shared/                        # Shared hooks, API client, and utilities
+└── styles/                        # Global styles and animations
+```
+
+## Quality checks
+
+```bash
+npm run typecheck
+npm run lint
+npm test
+npm run build
+
+# Run every check
+npm run check
+```
+
+## Trade-offs and next improvements
+
+- A 15-second polling interval is appropriate for this small dashboard; production real-time requirements would be better served by Server-Sent Events or WebSockets.
+- Filtering currently runs on the client because the mock queue is small. Larger queues should support server-side filtering and pagination.
+- Authentication and authorization must be enforced by the backend; the frontend API base URL is intentionally public configuration.
