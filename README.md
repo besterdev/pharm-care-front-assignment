@@ -140,33 +140,21 @@ npm start
 Without environment configuration, the dashboard requests `/tasks` and Vite proxies it
 to `http://localhost:4000`.
 
-### Vercel deployment with MockAPI.io
+### Production API
 
-`json-server` cannot run as a persistent process on a static Vercel deployment. Use a
-MockAPI.io project so `GET /tasks`, polling, and `PATCH /tasks/:id` remain available.
+`json-server` is only used in local development. In production the dashboard calls
+`GET /api/v1/tasks` and `PATCH /api/v1/tasks/:id` on the configured API origin.
 
-1. Create a MockAPI.io project and an empty `tasks` resource.
-2. Seed it once from `db.json`:
+Set this environment variable in your deployment platform:
 
-   ```bash
-   npm run seed:mock -- https://<project>.mockapi.io/api/v1
-   ```
+```text
+VITE_API_BASE_URL=https://api.example.com
+```
 
-3. In Vercel → Project Settings → Environment Variables, add this value to Production
-   and Preview:
+Do not include `/api/v1/tasks`; the client appends that path automatically. The API can
+return either a direct `Task[]` array or `{ "data": Task[] }`.
 
-   ```text
-   VITE_API_BASE_URL=https://<project>.mockapi.io/api/v1
-   ```
-
-   Use the project base URL without `/tasks`. This is a public browser configuration,
-   so do not store secrets in it.
-
-4. Redeploy the project after adding or changing the environment variable. Vercel should
-   detect Vite automatically; the build command is `npm run build` and output is `dist`.
-
-To test the remote API locally, copy `.env.example` to `.env.local`, set the same URL,
-and restart `npm start`.
+`VITE_API_BASE_URL` is public browser configuration, so do not store secrets in it.
 
 ---
 
