@@ -149,68 +149,71 @@ export const DashboardPage = () => {
         isRefreshing={isRefreshing}
         onRefresh={() => void refresh()}
       >
-        <div className="grid grid-cols-[minmax(0,1fr)_286px] gap-5 max-[1024px]:grid-cols-1">
-          <div>
+        <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_286px]">
+          <div className="space-y-5 lg:col-start-1">
             <WelcomePanel newTasks={counts.new} />
             <QueueStats counts={counts} />
             <DataQualityAlert issueCount={dataQualityIssueCount} />
-            <section className="w-full">
-              <div
-                className="mb-5 flex items-end justify-between gap-3 max-[480px]:items-center"
-                ref={queueHeadingRef}
-              >
-                <div>
-                  <p className="font-mono text-[10px] uppercase tracking-[.11em] text-[#7d86af]">
-                    Incoming requests
-                  </p>
-                  <h2 className="mt-2 text-[21px] font-semibold tracking-[-.7px] text-[#464e6d]">
-                    Consultation queue{" "}
-                    <span className="font-mono text-[10px] text-[#7d86af]">
-                      {visibleTasks.length}
-                    </span>
-                  </h2>
-                </div>
-                <ViewSwitcher view={view} onChange={setView} />
-              </div>
-              <TaskFilters
-                query={query}
-                service={service}
-                status={status}
-                dateRange={dateRange}
-                fromDate={fromDate}
-                toDate={toDate}
-                onQueryChange={setQuery}
-                onServiceChange={setService}
-                onStatusChange={setStatus}
-                onDateRangeChange={setDateRange}
-                onFromDateChange={setFromDate}
-                onToDateChange={setToDate}
-                onReset={resetFilters}
-              />
-              <TaskList
-                tasks={visibleTasks}
-                view={view}
-                isLoading={isLoading}
-                isError={isError}
-                errorMessage={errorMessage}
-                hasActiveFilters={Boolean(
-                  query ||
-                  service !== "all" ||
-                  status !== "all" ||
-                  dateRange !== "all",
-                )}
-                updatingKeys={updatingKeys}
-                onOpen={(task) => setSelectedTaskKey(task.key)}
-                onAdvance={(task) => void advanceTask(task)}
-                onRetry={() => void refresh()}
-                onClearFilters={resetFilters}
-              />
-            </section>
           </div>
-          <aside className="grid content-start gap-[18px] max-[1024px]:grid-cols-2 max-sm:grid-cols-1">
+          <aside
+            className="grid grid-cols-2 gap-5 max-[680px]:grid-cols-1 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:grid-cols-1"
+            aria-label="Pharmacist profile and today’s plan"
+          >
             <ProfilePanel />
             <TodayPanel inProgress={counts.in_progress} />
           </aside>
+          <section className="w-full lg:col-start-1">
+            <div
+              className="mb-5 flex items-end justify-between gap-3 max-[480px]:items-center"
+              ref={queueHeadingRef}
+            >
+              <div>
+                <p className="font-mono text-[10px] uppercase tracking-[.11em] text-[#7d86af]">
+                  Incoming requests
+                </p>
+                <h2 className="mt-2 text-[21px] font-semibold tracking-[-.7px] text-[#464e6d]">
+                  Consultation queue{" "}
+                  <span className="font-mono text-[10px] text-[#7d86af]">
+                    {visibleTasks.length}
+                  </span>
+                </h2>
+              </div>
+              <ViewSwitcher view={view} onChange={setView} />
+            </div>
+            <TaskFilters
+              query={query}
+              service={service}
+              status={status}
+              dateRange={dateRange}
+              fromDate={fromDate}
+              toDate={toDate}
+              onQueryChange={setQuery}
+              onServiceChange={setService}
+              onStatusChange={setStatus}
+              onDateRangeChange={setDateRange}
+              onFromDateChange={setFromDate}
+              onToDateChange={setToDate}
+              onReset={resetFilters}
+            />
+            <TaskList
+              tasks={visibleTasks}
+              view={view}
+              isLoading={isLoading}
+              isError={isError}
+              errorMessage={errorMessage}
+              hasActiveFilters={Boolean(
+                query ||
+                service !== "all" ||
+                status !== "all" ||
+                dateRange !== "all",
+              )}
+              updatingKeys={updatingKeys}
+              onOpen={(task) => setSelectedTaskKey(task.key)}
+              onAdvance={(task) => void advanceTask(task)}
+              onRetry={() => void refresh()}
+              onClearFilters={resetFilters}
+            />
+          </section>
         </div>
       </DashboardLayout>
       <Suspense fallback={null}>
