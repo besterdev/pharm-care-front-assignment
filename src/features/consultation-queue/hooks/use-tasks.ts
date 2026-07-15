@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { axiosInstance } from "@/shared/lib/axios-instance"
 import { getDisplayStatus, getNextStatus } from "../utils/task"
 import { taskService } from "../services/tasks-api"
 import type { ConsultationTask, TaskStatus } from "../types/task"
@@ -16,7 +15,7 @@ export const useTasks = () => {
     queryKey: tasksQueryKey,
     queryFn: taskService.getTasks,
     refetchInterval: liveQueuePollMs,
-    refetchIntervalInBackground: true,
+    refetchIntervalInBackground: false,
   })
   const tasks = tasksQuery.data ?? emptyTasks
   const knownTaskKeys = useRef(new Set<string>())
@@ -50,9 +49,7 @@ export const useTasks = () => {
     mutationKey: statusMutationKey,
     mutationFn: async (task: ConsultationTask) => {
       const nextStatus = getNextStatus(task)
-      await axiosInstance.patch(`/tasks/${encodeURIComponent(task.apiId)}`, {
-        status: nextStatus,
-      })
+      await taskService.updateStatus(task.apiId, nextStatus)
       return { key: task.key, nextStatus }
     },
     onMutate: async (task) => {
@@ -81,9 +78,12 @@ export const useTasks = () => {
       )
     },
     onSettled: () => {
-      if (queryClient.isMutating({ mutationKey: statusMutationKey }) === 1) {
-        void queryClient.invalidateQueries({ queryKey: tasksQueryKey })
-      }
+      if (queryClient.isMutating({ mutationKey: statusMutationKey }) !== 1) return
+      void queryClient.invalidateQueries({
+        queryKey: tasksQueryKey,
+        refetchType:
+          document.visibilityState === "visible" ? "active" : "none",
+      })
     },
   })
 
